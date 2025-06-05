@@ -1,4 +1,4 @@
-export const awarenessQuestions = [
+export const accessQuestions = [
 {
     id: 1,
     text: "¿En su empresa se informa sobre buenas prácticas de seguridad digital?",
@@ -8,8 +8,7 @@ export const awarenessQuestions = [
       { text: "Sí, de manera informal", value: 1 },
       { text: "Sí, con materiales o recursos específicos", value: 2 },
       { text: "Sí, como parte de una política formal y se evalúa", value: 3 }
-    ],
-    next: 2
+    ]
   },
   {
     id: 2,
@@ -19,8 +18,7 @@ export const awarenessQuestions = [
       { text: "Sí, de manera informal o esporádica", value: 1 },
       { text: "Sí, con materiales preparados o acciones regulares", value: 2 },
       { text: "Sí, como parte de una política formal y se evalúa su efectividad", value: 3 }
-    ],
-    next: 3
+    ]
   },
   {
     id: 3,
@@ -30,8 +28,7 @@ export const awarenessQuestions = [
       { text: "Sí, pero no está escrito ni estructurado", value: 1 },
       { text: "Sí, hay un plan escrito con fechas y responsables", value: 2 },
       { text: "Sí, y además se revisa y evalúa regularmente", value: 3 }
-    ],
-    next:4
+    ]
   },
   {
     id: 4,
@@ -41,7 +38,6 @@ export const awarenessQuestions = [
       { text: "Sí, se adapta de forma general, sin documentación", value: 1 },
       { text: "Sí, con materiales o sesiones específicas según el rol", value: 2 },
       { text: "Sí, y forma parte de una política que se evalúa", value: 3 }
-    ],
-    next: null
+    ]
   }
 ]
