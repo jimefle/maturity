@@ -1,103 +1,99 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState } from 'react';
+import { awarenessQuestions } from './utils/awarenessQuestions';
+import {v4 as uuidv4} from 'uuid';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [evaluationId, setEvaluationId] = useState('');
+  const [responses, setResponses] = useState(Array(awarenessQuestions.length).fill(-1)); // responses va a tener tantas posiciones como preguntas hay, y en cada posicion hay un -1
+  const [result, setResult] = useState(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // generar ID de la evaluacion
+  useEffect(()=>{
+    const newId = uuidv4();
+    setEvaluationId(newId)
+  },[]);
+
+  const handleChange = (index, value) => {
+    const newResponses = [...responses]; // guardo respuestas anteriores
+    newResponses[index] = value; // agrego nueva respuesta
+    setResponses(newResponses); 
+  };
+
+  const calculateLevel = async () => {
+  if (responses.includes(-1)) { // si hay algún -1 es porque no se respondieron todas las preguntas
+      alert('Por favor responda todas las preguntas.');
+      return;
+    }
+
+    const total = responses.reduce((acc, val) => acc + val, 0);
+    const average = total / responses.length;
+
+    let level = '';
+    if (responses.every(val => val === 0)) {
+      level = 'No se realizan prácticas de concientización.';
+    } else if (average < 2) {
+      level = 'Nivel 1: Prácticas básicas e informales.';
+    } else if (average < 3) {
+      level = 'Nivel 2: Prácticas documentadas y con recursos.';
+    } else {
+      level = 'Nivel 3: Prácticas formales y evaluadas.';
+    }
+
+    setResult(level);
+
+  // Enviar a la API
+    try {
+      const res = await fetch('/api/save-assessment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          evaluationId,
+          subdomain: 'Concientización y capacitación',
+          responses: responses,
+          level
+        }),
+      });
+
+      const data = await res.json();
+      console.log('📬 Respuesta de la API:', data);
+    } catch (err) {
+      console.error('❌ Error al enviar los datos:', err);
+    }
+    };
+  
+  return (
+    <main className="max-w-3xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">Subdominio de Concientización y Capacitación</h1>
+      {awarenessQuestions.map((q, index) => ( // por cada pregunta
+        <div key={q.id} className="mb-6 border rounded p-4">
+          <p className="font-medium">{q.text}</p>
+          {q.example && <p className="text-sm text-gray-600">{q.example}</p>}
+          <div className="mt-2 space-y-2">
+            {q.options.map((opt, i) => ( // por cada opcion
+              <label key={i} className="block">
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value={opt.value}
+                  checked={responses[index] === opt.value}
+                  onChange={() => handleChange(index, opt.value)} // respuesta elegida
+                  className="mr-2"
+                />
+                {opt.text}
+              </label>
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      ))}
+      <button
+        onClick={calculateLevel}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Calcular nivel de madurez
+      </button>
+      {result && <p className="mt-4 text-lg font-semibold">{result}</p>}
+    </main>
   );
 }
