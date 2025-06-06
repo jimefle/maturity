@@ -1,11 +1,39 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function Questionnaire({questions, subdomain, evaluationId}) {
+export default function Questionnaire({subdomain, evaluationId}) {
+  const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState({}); 
-  const [result, setResult] = useState(null);
-  const [currentQuestionId, setCurrentQuestionId] =useState(questions[0].id); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentQuestionId, setCurrentQuestionId] =useState(null); 
+  const router = useRouter();
+
+  useEffect(()=>{
+    const getQuestions = async ()=>{
+      try {
+        const res = await fetch(`/api/questions?subdomain=${encodeURIComponent(subdomain)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Error desconocido');
+        }
+
+        setQuestions(data);
+        setCurrentQuestionId(data[0]?.id || null)
+      }
+      catch (err) {
+        console.error('Error al obtener preguntas:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getQuestions();
+  }, [subdomain]);
 
   const currentQuestion = questions.find(q => q.id === currentQuestionId);
   
@@ -14,8 +42,14 @@ export default function Questionnaire({questions, subdomain, evaluationId}) {
       ...prev, // respuestas anteriores
       [currentQuestionId]:value
      }))
-    if (currentQuestion.next===null) {
-      calculateLevel({...responses, [currentQuestionId]:value})
+  };
+  const handleNext = async() => {
+    const nextId = currentQuestion?.next;
+    if(nextId){
+      setCurrentQuestionId(nextId)
+    } else{
+      const finalLevel = await calculateLevel({...responses, [currentQuestionId]:responses[currentQuestionId]})
+      router.push(`/?result=${encodeURIComponent(finalLevel)}`);
     }
   };
 
@@ -25,7 +59,7 @@ export default function Questionnaire({questions, subdomain, evaluationId}) {
     const resp = idsQuestions.map(id => {
     const val = allResponses[id];
     return val !== undefined ? Number(val) : 0; // le asigno nivel 0 si no respondio la pregunta (por tema de grafo)
-  });// Object.values(allResponses);
+    });// Object.values(allResponses);
     const total = resp.reduce((acc, val) => acc + Number(val), 0);
     const average = total / idsQuestions.length;
 
@@ -34,9 +68,6 @@ export default function Questionnaire({questions, subdomain, evaluationId}) {
     else if (average < 3) level = 'Nivel 2';
     else level = 'Nivel 3';
     
-
-    setResult(level);
-
     // Enviar a la API
     try {
       const res = await fetch('/api/save-assessment', {
@@ -55,50 +86,44 @@ export default function Questionnaire({questions, subdomain, evaluationId}) {
     } catch (err) {
       console.error('❌ Error al enviar los datos:', err);
     }
+    return level;
   };
 
-  const preguntaActual = questions.find(q => q.id === currentQuestionId);
-
-  if (!preguntaActual) return <p>Cargando pregunta...</p>;
+  if (loading) return <p>Cargando preguntas...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!currentQuestion) return <p>Cargando pregunta...</p>;
   
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Subdominio: {subdomain}</h1>
       
-      <div key={preguntaActual.id} className="mb-6 border p-4 rounded">
-        <p className="font-medium mb-1">{preguntaActual.text}</p>
-        <p className="text-sm text-gray-600 italic mb-3">{preguntaActual.example}</p>
+      <div key={currentQuestion.id} className="mb-6 border p-4 rounded">
+        <p className="font-medium mb-1">{currentQuestion.text}</p>
+        <p className="text-sm text-gray-600 italic mb-3">{currentQuestion.example}</p>
         <div className="space-y-1">
-          {preguntaActual.options.map((opt, index) => (
+          {currentQuestion.options.map((opt, index) => (
             <label key={index} className="block">
               <input
                 type="radio"
-                name={`pregunta-${preguntaActual.id}`}
+                name={`pregunta-${currentQuestion.id}`}
                 value={opt.value}
+                checked={responses[currentQuestion.id] === opt.value}
                 onChange={() => handleChange(opt.value)}
                 className="mr-2"
               />
-              {opt.text}
+              {opt.label}
             </label>
           ))}
+          </div>
           <button
-            disabled={!responses[currentQuestionId]}
-            onClick={() => {
-            if (currentQuestion.next) {
-              setCurrentQuestionId(currentQuestion.next);
-            } 
-            }}
+            disabled={responses[currentQuestion.id] === undefined}
+            onClick={handleNext}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-          {result ? 'Finalizar' : 'Siguiente'}
+          {currentQuestion.next? 'Siguiente' : 'Finalizar'}
         </button>
-        </div>
+        
       </div>
-
-      {result && (
-        <p className="mt-4 text-lg font-semibold">
-          Resultado final para este subdominio: {result}
-        </p>
-      )}
     </div>
   );
 }

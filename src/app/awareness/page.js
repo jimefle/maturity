@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import Questionnaire from "../components/questionnaire";
-import { awarenessQuestions } from '../utils/awarenessQuestions'
 
 export default function AwarenessPafe(){
     const [evaluationId, setEvaluationId] = useState('');
@@ -15,7 +14,7 @@ export default function AwarenessPafe(){
 
     return (
         evaluationId && (
-            <Questionnaire questions={awarenessQuestions} subdomain={"Concientización y capacitación"} evaluationId={evaluationId}/>
+            <Questionnaire subdomain="Concientización y capacitación" evaluationId={evaluationId}/>
         )
     )
 }

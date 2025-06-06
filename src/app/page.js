@@ -1,6 +1,11 @@
+'use client';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const result = searchParams.get('result')
+  console.log(result)
   return (
     <main className="max-w-xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Evaluación de madurez en ciberseguridad</h1>
@@ -17,6 +22,12 @@ export default function Home() {
         </li>
         {/* Más subdominios aquí */}
       </ul>
+      {result && (
+        <p className="mt-4 text-lg font-semibold">
+          Resultado final para este subdominio: {result}
+        </p>
+      )}
+      
     </main>
   );
 }
