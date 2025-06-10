@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function Questionnaire({subdomain, evaluationId}) {
   const [questions, setQuestions] = useState([]);
@@ -48,25 +49,29 @@ export default function Questionnaire({subdomain, evaluationId}) {
     if(nextId){
       setCurrentQuestionId(nextId)
     } else{
-      const finalLevel = await calculateLevel({...responses, [currentQuestionId]:responses[currentQuestionId]})
-      router.push(`/?result=${encodeURIComponent(finalLevel)}`);
+      const {level, prog} = await calculateLevel({...responses, [currentQuestionId]:responses[currentQuestionId]});
+      router.push(`/?level=${encodeURIComponent(level)}&prog=${prog}`);
     }
   };
 
   const calculateLevel = async (allResponses) => {
     const idsQuestions = questions.map(p=> p.id); // todas las preguntas
-
+    
     const resp = idsQuestions.map(id => {
     const val = allResponses[id];
     return val !== undefined ? Number(val) : 0; // le asigno nivel 0 si no respondio la pregunta (por tema de grafo)
-    });// Object.values(allResponses);
-    const total = resp.reduce((acc, val) => acc + Number(val), 0);
-    const average = total / idsQuestions.length;
+    });
+    console.log(resp)
+    // nivel de progresión
+    const totalImplemented = resp.filter(val => val !== 0); 
+    const prog = (totalImplemented.length/resp.length)*100;
 
+    // nivel de capacidad
+    const min = totalImplemented.length>0? Math.min(...totalImplemented) : null; 
     let level = 'Nivel 0';
-    if (average < 2) level = 'Nivel 1';
-    else if (average < 3) level = 'Nivel 2';
-    else level = 'Nivel 3';
+    if (min === 2) level = 'Nivel 2'; 
+    else if (min === 3) level = 'Nivel 3';
+    else if (min === 1) level = 'Nivel 1';
     
     // Enviar a la API
     try {
@@ -77,7 +82,8 @@ export default function Questionnaire({subdomain, evaluationId}) {
           evaluationId,
           subdomain: 'Concientización y capacitación',
           responses: responses,
-          level
+          level,
+          prog
         }),
       });
 
@@ -86,7 +92,7 @@ export default function Questionnaire({subdomain, evaluationId}) {
     } catch (err) {
       console.error('❌ Error al enviar los datos:', err);
     }
-    return level;
+    return {level, prog}; 
   };
 
   if (loading) return <p>Cargando preguntas...</p>;
@@ -94,10 +100,15 @@ export default function Questionnaire({subdomain, evaluationId}) {
   if (!currentQuestion) return <p>Cargando pregunta...</p>;
   
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Subdominio: {subdomain}</h1>
-      
-      <div key={currentQuestion.id} className="mb-6 border p-4 rounded">
+    <div className="max-h-screen mx-auto items-center">
+      <main className="max-w-4xl mx-auto p-6 ">
+      <h1 className="text-2xl font-bold text-zinc-100 mb-2 text-center">Evaluación de madurez</h1>
+      <p className="text-zinc-500 mb-6 max-w-2xl mx-auto text-center">
+          Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. 
+          Ex sapien vitae pellentesque sem placerat in id.
+      </p>
+
+      <div key={currentQuestion.id} className="mt-10 mb-10 flex flex-col">
         <p className="font-medium mb-1">{currentQuestion.text}</p>
         <p className="text-sm text-gray-600 italic mb-3">{currentQuestion.example}</p>
         <div className="space-y-1">
@@ -118,12 +129,13 @@ export default function Questionnaire({subdomain, evaluationId}) {
           <button
             disabled={responses[currentQuestion.id] === undefined}
             onClick={handleNext}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="bg-purple-500 hover:bg-purple-800 text-white font-semibold py-2 px-4 rounded-full transition duration-200 m-2"
           >
           {currentQuestion.next? 'Siguiente' : 'Finalizar'}
         </button>
         
       </div>
+      </main>
     </div>
   );
 }
