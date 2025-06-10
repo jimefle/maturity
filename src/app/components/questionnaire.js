@@ -100,15 +100,11 @@ export default function Questionnaire({subdomain, evaluationId}) {
   if (!currentQuestion) return <p>Cargando pregunta...</p>;
   
   return (
-    <div className="max-h-screen mx-auto items-center">
-      <main className="max-w-4xl mx-auto p-6 ">
+    <div className="max-h-screen flex items-center justify-center">
+      <main className="max-w-4xl w-full p-6 ">
       <h1 className="text-2xl font-bold text-zinc-100 mb-2 text-center">Evaluación de madurez</h1>
-      <p className="text-zinc-500 mb-6 max-w-2xl mx-auto text-center">
-          Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. 
-          Ex sapien vitae pellentesque sem placerat in id.
-      </p>
 
-      <div key={currentQuestion.id} className="mt-10 mb-10 flex flex-col">
+      <div key={currentQuestion.id} className="m-10 text-start">
         <p className="font-medium mb-1">{currentQuestion.text}</p>
         <p className="text-sm text-gray-600 italic mb-3">{currentQuestion.example}</p>
         <div className="space-y-1">
@@ -126,14 +122,16 @@ export default function Questionnaire({subdomain, evaluationId}) {
             </label>
           ))}
           </div>
-          <button
+          <div className='flex justify-end mt-4'>
+            <button
             disabled={responses[currentQuestion.id] === undefined}
             onClick={handleNext}
             className="bg-purple-500 hover:bg-purple-800 text-white font-semibold py-2 px-4 rounded-full transition duration-200 m-2"
-          >
-          {currentQuestion.next? 'Siguiente' : 'Finalizar'}
-        </button>
-        
+            >
+              {currentQuestion.next? 'Siguiente' : 'Finalizar'} 
+            </button>
+          </div>
+                 
       </div>
       </main>
     </div>
