@@ -1,0 +1,10 @@
+### Obtener evaluación get-evaluation
+@evaluationId = 335ccb82-2ce5-4309-8b60-62dde94644d0
+GET http://localhost:3000/api/get-evaluation?evaluationId={{evaluationId}}
+
+### Obtener preguntas get-questions
+@subdomain = Control de accesos
+GET http://localhost:3000/api/get-questions?subdomain={{subdomain}}
+
+
+

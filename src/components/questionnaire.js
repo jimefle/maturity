@@ -1,41 +1,20 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { calculateLevel } from '@/lib/logic/calculateMaturity';
-import { saveAssessment } from '@/lib/logic/save-assesment';
+import { saveAssessment } from '@/lib/logic/save-assessment';
+import { useFetchQuestions } from '@/lib/logic/useFetchQuestions';
 
 export default function Questionnaire({subdomain, evaluationId, onFinishSubdomain}) {
-  const [questions, setQuestions] = useState([]);
-  const [responses, setResponses] = useState({}); 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {questions, loading, error } = useFetchQuestions(subdomain);
   const [currentQuestionId, setCurrentQuestionId] =useState(null); 
-  const router = useRouter();
+  const [responses, setResponses] = useState({});
 
-  useEffect(()=>{
-    const getQuestions = async ()=>{
-      try {
-        const res = await fetch(`/api/get-questions?subdomain=${encodeURIComponent(subdomain)}`);
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.error || 'Error desconocido');
-        }
-
-        setQuestions(data);
-        setCurrentQuestionId(data[0]?.id || null)
-      }
-      catch (err) {
-        console.error('Error al obtener preguntas:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getQuestions();
-  }, [subdomain]);
+  useEffect(() => {
+  if (questions.length > 0) {
+    setCurrentQuestionId(questions[0].id);
+  }
+}, [questions]);
 
   const currentQuestion = questions.find(q => q.id === currentQuestionId);
   
@@ -52,7 +31,6 @@ export default function Questionnaire({subdomain, evaluationId, onFinishSubdomai
     } else{
       const {level, prog} = await calculateLevel({...responses, [currentQuestionId]:responses[currentQuestionId]}, questions);
       await saveAssessment({ evaluationId, subdomain, responses, level, prog });
-      //router.push(`/?level=${encodeURIComponent(level)}&prog=${prog}`);
       if(typeof onFinishSubdomain == 'function'){
         onFinishSubdomain();
       }

@@ -1,4 +1,5 @@
-export default async function saveAssessment({ evaluationId, subdomain, responses, level, prog }) {
+'use client';
+export async function saveAssessment({ evaluationId, subdomain, responses, level, prog }) {
     // Enviar a la API
     try {
       const res = await fetch('/api/save-assessment', {
