@@ -2,9 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { calculateLevel } from '@/lib/logic/calculateMaturity';
+import { saveAssessment } from '@/lib/logic/save-assesment';
 
-export default function Questionnaire({subdomain, evaluationId}) {
+export default function Questionnaire({subdomain, evaluationId, onFinishSubdomain}) {
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState({}); 
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function Questionnaire({subdomain, evaluationId}) {
   useEffect(()=>{
     const getQuestions = async ()=>{
       try {
-        const res = await fetch(`/api/questions?subdomain=${encodeURIComponent(subdomain)}`);
+        const res = await fetch(`/api/get-questions?subdomain=${encodeURIComponent(subdomain)}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -45,54 +46,17 @@ export default function Questionnaire({subdomain, evaluationId}) {
      }))
   };
   const handleNext = async() => {
-    const nextId = currentQuestion?.next;
+    const nextId =currentQuestion.options[responses[currentQuestionId]].next;
     if(nextId){
       setCurrentQuestionId(nextId)
     } else{
-      const {level, prog} = await calculateLevel({...responses, [currentQuestionId]:responses[currentQuestionId]});
-      router.push(`/?level=${encodeURIComponent(level)}&prog=${prog}`);
+      const {level, prog} = await calculateLevel({...responses, [currentQuestionId]:responses[currentQuestionId]}, questions);
+      await saveAssessment({ evaluationId, subdomain, responses, level, prog });
+      //router.push(`/?level=${encodeURIComponent(level)}&prog=${prog}`);
+      if(typeof onFinishSubdomain == 'function'){
+        onFinishSubdomain();
+      }
     }
-  };
-
-  const calculateLevel = async (allResponses) => {
-    const idsQuestions = questions.map(p=> p.id); // todas las preguntas
-    
-    const resp = idsQuestions.map(id => {
-    const val = allResponses[id];
-    return val !== undefined ? Number(val) : 0; // le asigno nivel 0 si no respondio la pregunta (por tema de grafo)
-    });
-    console.log(resp)
-    // nivel de progresión
-    const totalImplemented = resp.filter(val => val !== 0); 
-    const prog = (totalImplemented.length/resp.length)*100;
-
-    // nivel de capacidad
-    const min = totalImplemented.length>0? Math.min(...totalImplemented) : null; 
-    let level = 'Nivel 0';
-    if (min === 2) level = 'Nivel 2'; 
-    else if (min === 3) level = 'Nivel 3';
-    else if (min === 1) level = 'Nivel 1';
-    
-    // Enviar a la API
-    try {
-      const res = await fetch('/api/save-assessment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          evaluationId,
-          subdomain: 'Concientización y capacitación',
-          responses: responses,
-          level,
-          prog
-        }),
-      });
-
-      const data = await res.json();
-      console.log('📬 Respuesta de la API:', data);
-    } catch (err) {
-      console.error('❌ Error al enviar los datos:', err);
-    }
-    return {level, prog}; 
   };
 
   if (loading) return <p>Cargando preguntas...</p>;
@@ -102,7 +66,8 @@ export default function Questionnaire({subdomain, evaluationId}) {
   return (
     <div className="max-h-screen flex items-center justify-center">
       <main className="max-w-4xl w-full p-6 ">
-      <h1 className="text-2xl font-bold text-zinc-100 mb-2 text-center">Evaluación de madurez</h1>
+      <h1 className="text-3xl font-bold text-zinc-100 mb-2 text-center">Evaluación de madurez</h1>
+      <h2 className="text-xl text-zinc-100 mb-2 text-center"> {subdomain} </h2>
 
       <div key={currentQuestion.id} className="m-10 text-start">
         <p className="font-medium mb-1">{currentQuestion.text}</p>
@@ -128,7 +93,7 @@ export default function Questionnaire({subdomain, evaluationId}) {
             onClick={handleNext}
             className="bg-purple-500 hover:bg-purple-800 text-white font-semibold py-2 px-4 rounded-full transition duration-200 m-2"
             >
-              {currentQuestion.next? 'Siguiente' : 'Finalizar'} 
+              {'Siguiente'} 
             </button>
           </div>
                  

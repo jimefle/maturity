@@ -1,7 +1,7 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import Card from './components/card';
-import Header from './components/header';
+import Card from '../components/card';
+import Header from '../components/header';
 
 export default function Home() {
   const searchParams = useSearchParams();

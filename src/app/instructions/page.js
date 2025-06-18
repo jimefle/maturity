@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
-import Header from '../components/header';
+import Header from '../../components/header';
 
 export default function Instructions(){
     const titulo="Evaluación de madurez";
     const descrip="Respondé una serie de preguntas clave sobre prácticas de ciberseguridad en tu organización. Esta evaluación te va a permitir conocer tu nivel de madurez y detectar oportunidades de mejora.";
     const instruc="Leé atentamente cada pregunta y seleccioná la opción que mejor refleje la situación actual de tu organización. Las respuestas deben basarse en hechos concretos, no en intenciones futuras. Al finalizar, vas a obtener un perfil de madurez con recomendaciones para avanzar hacia un mayor nivel de seguridad.";
-    const href="/awareness"
+    const href="/evaluation"
 
     return(
         <div className='min-h-screen flex flex-col'>
