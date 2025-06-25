@@ -18,7 +18,7 @@ export default function Evaluation(){
     },[]);
 
     return (
-        <main className="min-h-screen flex flex-col">
+        <main className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top_right,_#581c87,_#18181b,_#18181b)] overflow-hidden">
             <Header volver={true}/>
             <div className="flex-1 flex justify-center items-center">
             {evaluationId && showSummary ? (

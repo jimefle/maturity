@@ -1,6 +1,7 @@
 'use client';
 import { useFetchEvaluation } from "@/lib/logic/useFetchEvaluation";
 import LoadingMessage from "./loadingmessage";
+import {motion} from 'framer-motion';
 
 export default function Summary({ evaluationId }) {
   const { results, loading } = useFetchEvaluation(evaluationId);
@@ -10,6 +11,12 @@ export default function Summary({ evaluationId }) {
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-6 bg-zinc-900 rounded-2xl shadow-lg border border-zinc-700">
+      <motion.div 
+        className=""
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
       <h2 className="text-2xl font-bold text-zinc-100 mb-6 text-center">Resumen de Evaluación</h2>
       <ul className="grid grid-cols-3 gap-4">
         {Object.entries(results).map(([subdomain, data]) => (
@@ -28,6 +35,7 @@ export default function Summary({ evaluationId }) {
           </li>
         ))}
       </ul>
+      </motion.div>
     </div>
   );
 }

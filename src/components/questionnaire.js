@@ -5,6 +5,7 @@ import { calculateLevel } from '@/lib/logic/calculateMaturity';
 import { saveAssessment } from '@/lib/logic/save-assessment';
 import { useFetchQuestions } from '@/lib/logic/useFetchQuestions';
 import LoadingMessage from './loadingmessage';
+import {motion } from 'framer-motion';
 
 export default function Questionnaire({ subdomain, evaluationId, onFinishSubdomain }) {
   const { questions, loading, error } = useFetchQuestions(subdomain);
@@ -47,8 +48,14 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
   if (!currentQuestion) return <LoadingMessage mensaje="pregunta"/>;
 
   return (
-    <div className="max-h-screen flex items-center justify-center">
-      <main className="bg-zinc-900 border border-zinc-700  shadow-lg rounded-2xl max-w-2xl w-full p-8">
+    <div className="max-h-screen flex items-center justify-center p-5">
+      <motion.div 
+        className="flex flex-col md:flex-row justify-center items-stretch gap-6 mt-8 mb-12"
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
+      <main className="bg-black/20 backdrop-blur-md border border-zinc-700  shadow-lg rounded-2xl p-8">
         <h1 className="text-3xl font-bold text-zinc-100 mb-2 text-center">Evaluación de Madurez</h1>
         <h2 className="text-xl text-purple-400 mb-6 text-center">{subdomain}</h2>
 
@@ -87,6 +94,7 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
           </div>
         </div>
       </main>
+      </motion.div>
     </div>
   );
 }

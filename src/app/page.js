@@ -10,20 +10,20 @@ export default function Home() {
   const prog = searchParams.get('prog');
 
   return (
-    <div className='max-h-screen flex flex-col'>
+    <div className='min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top,_#581c87,_#18181b,_#18181b)]'>
       <Header/>
-        <main className="flex flex-col items-center justify-center px-4 w-full h-screen bg-cover bg-center bg-no-repeat gap-5">
+        <main className="pt-16 flex flex-col items-center justify-center px-4 lg:px-10 w-full gap-5 min-h-screen">
         <motion.h1 
-          className="text-3xl md:text-4xl font-extrabold mb-4 text-center pt-9 text-zinc-100"
+          className="text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 text-center pt-9 text-zinc-100"
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.6 }}
         >
-          Evaluación de Madurez en Ciberseguridad
+          Evaluación de Madurez<br /> en Ciberseguridad
         </motion.h1>
 
         <motion.h3 
-          className="text-md md:text-lg text-zinc-400 mb-6 text-center max-w-xl mx-auto"
+          className="text-xl text-zinc-200 mb-4 text-center max-w-xl mx-auto"
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ duration: 0.8, delay: 0.3 }}
@@ -32,7 +32,7 @@ export default function Home() {
         </motion.h3>
 
         <motion.div 
-          className="flex flex-col md:flex-row justify-center items-stretch gap-6 mt-8 mb-12"
+          className="flex flex-col md:flex-row justify-center items-stretch gap-6 md:gap-2 lg:gap-6 mt-2 mb-6"
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ duration: 0.8, delay: 0.5 }}
@@ -40,19 +40,19 @@ export default function Home() {
           <Card 
             titulo="Cuestionario de Perfil" 
             descrip="Completá un breve formulario para identificar el contexto y características de tu empresa."
-            boton="Realizar cuestionario" 
+            text="Realizar cuestionario" 
             href=""
           />
           <Card 
             titulo="Evaluación de Madurez" 
             descrip="Respondé preguntas clave sobre prácticas de ciberseguridad para conocer tu nivel de madurez."
-            boton="Realizar evaluación" 
+            text="Realizar evaluación" 
             href="/instructions"
           />
           <Card 
             titulo="Evaluaciones" 
             descrip="Accedé al historial de evaluaciones realizadas y seguí la evolución de tu organización."
-            boton="Ver evaluaciones" 
+            text="Ver evaluaciones" 
             href=""
           />
         </motion.div>
