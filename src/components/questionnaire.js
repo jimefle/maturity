@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { calculateLevel } from '@/features/calculateMaturity';
+import { calculateSubdomainLevel } from '@/features/evaluation/calculateMaturity';
 import { useFetchQuestions } from '@/hooks/useFetchQuestions';
 import { useSaveEvaluation } from '@/hooks/useSaveEvaluation';
 import LoadingMessage from './loadingmessage';
@@ -34,7 +34,7 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
     if (nextId) {
       setCurrentQuestionId(nextId);
     } else {
-      const { level, prog } = await calculateLevel(
+      const { level, prog } = await calculateSubdomainLevel(
         { ...responses, [currentQuestionId]: responses[currentQuestionId] },
         questions
       );
