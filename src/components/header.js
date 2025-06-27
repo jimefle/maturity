@@ -13,22 +13,25 @@ export default function Header({volver=false}){
 
     return(
         <div>
-        <header className="fixed top-0 z-100 flex justify-between p-3 bg-black/30 backdrop-blur-md w-full">
-            <div className='flex gap-6 items-center py-2 px-2 cursor-pointer'>
-                <User  />
+        <header className="fixed top-0 z-100 flex justify-between p-6 bg-black/30 backdrop-blur-md w-full h-14">
+            <div className='flex gap-8 items-center cursor-pointer text-purple-300'>
+                <User />
                 <LogOut />
-                <div onClick={toggleInfo}>               
+            </div>
+            <div className='flex gap-6 items-center cursor-pointer text-purple-300'>
+                {volver &&
+                 <Button text="Inicio" primary={false}/>
+                }
+                <div onClick={toggleInfo} className='hover:text-purple-100'>               
                     <Info />
                 </div>
             </div>
-            {volver &&
-                <Button text="Volver" primary={false}/>
-            }
+            
         </header>
         <AnimatePresence>
             {showInfo && (
                 <motion.div
-                    className="fixed top-16 left-4 bg-black/80 text-white p-4 rounded-lg shadow-lg max-w-xs z-50"
+                    className="fixed top-16 right-4 bg-black/80 text-white p-4 rounded-lg shadow-lg max-w-xs z-50"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}

@@ -1,9 +1,10 @@
 import clientPromise from '@/lib/mongodb';
 
 export async function GET() {
+  console.log("HOLAAA!");
   try {
     const client = await clientPromise;
-    const db = client.db();
+    const db = client.db("maturity");
     const collections = await db.collections();
     const collectionNames = collections.map(c => c.collectionName);
 

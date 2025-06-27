@@ -1,24 +1,7 @@
-import clientPromise from '@/lib/mongodb';
+import { getQuestionsBySubdomain } from '@/features/question/questionController';
 
 export async function GET(request) {
+  console.log("✅ Entró a GET /api/get-questions");
   const subdomain = request.nextUrl.searchParams.get('subdomain');
-
-  if (!subdomain) {
-    return Response.json({ error: 'Falta el subdominio' }, { status: 400 });
-  }
-
-  try {
-    const client = await clientPromise;
-    const db = client.db('maturity');
-    const doc = await db.collection('questions').findOne({ subdomain });
-
-    if (!doc) {
-      return Response.json({ error: 'Subdominio no encontrado' }, { status: 404 });
-    }
-
-    return Response.json(doc.questions);
-  } catch (error) {
-    console.error('❌ Error al obtener preguntas:', error);
-    return Response.json({ error: 'Error interno' }, { status: 500 });
-  }
+  return await getQuestionsBySubdomain(subdomain);
 }

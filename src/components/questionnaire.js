@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { calculateLevel } from '@/lib/logic/calculateMaturity';
-import { saveAssessment } from '@/lib/logic/save-assessment';
-import { useFetchQuestions } from '@/lib/logic/useFetchQuestions';
+import { calculateLevel } from '@/features/calculateMaturity';
+import { useFetchQuestions } from '@/hooks/useFetchQuestions';
+import { useSaveEvaluation } from '@/hooks/useSaveEvaluation';
 import LoadingMessage from './loadingmessage';
 import {motion } from 'framer-motion';
 
 export default function Questionnaire({ subdomain, evaluationId, onFinishSubdomain }) {
-  const { questions, loading, error } = useFetchQuestions(subdomain);
+  const { questions, fLoading, fError } = useFetchQuestions(subdomain);
+  const { saveEvaluation, sLoading, sError} = useSaveEvaluation();
+
   const [currentQuestionId, setCurrentQuestionId] = useState(null);
   const [responses, setResponses] = useState({});
 
@@ -36,15 +38,15 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
         { ...responses, [currentQuestionId]: responses[currentQuestionId] },
         questions
       );
-      await saveAssessment({ evaluationId, subdomain, responses, level, prog });
+      await saveEvaluation({ evaluationId, subdomain, responses, level, prog });
       if (typeof onFinishSubdomain === 'function') {
         onFinishSubdomain();
       }
     }
   };
 
-  if (loading) return <LoadingMessage mensaje="preguntas"/>;
-  if (error) return <p className="text-red-400 text-center">Error: {error}</p>;
+  if (fLoading) return <LoadingMessage mensaje="preguntas"/>;
+  if (fError) return <p className="text-red-400 text-center">Error: {error}</p>;
   if (!currentQuestion) return <LoadingMessage mensaje="pregunta"/>;
 
   return (
@@ -81,17 +83,18 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
 
           <div className="flex justify-end mt-6">
             <button
-              disabled={responses[currentQuestion.id] === undefined}
+              disabled={responses[currentQuestion.id] === undefined || sLoading}
               onClick={handleNext}
               className={`py-2.5 px-6 rounded-full font-semibold shadow-md transition-all duration-300 ${
-                responses[currentQuestion.id] === undefined
+                responses[currentQuestion.id] === undefined || sLoading
                   ? 'bg-zinc-600 text-zinc-400 cursor-not-allowed'
                   : 'bg-purple-600 hover:bg-purple-900 active:bg-purple-800 text-white font-semibold hover:shadow-lg cursor-pointer'
               }`}
             >
-              Siguiente
+              {sLoading? "Guardando..." : "Siguiente"}
             </button>
           </div>
+          {sError && <p className="text-red-500 mt-3">❌ {sError}</p>}
         </div>
       </main>
       </motion.div>

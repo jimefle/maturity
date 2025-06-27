@@ -1,7 +1,8 @@
 'use client';
-import { useFetchEvaluation } from "@/lib/logic/useFetchEvaluation";
+import { useFetchEvaluation } from "@/hooks/useFetchEvaluation";
 import LoadingMessage from "./loadingmessage";
 import {motion} from 'framer-motion';
+import Button from "./button";
 
 export default function Summary({ evaluationId }) {
   const { results, loading } = useFetchEvaluation(evaluationId);
@@ -12,13 +13,13 @@ export default function Summary({ evaluationId }) {
   return (
     <div className="max-w-4xl mx-auto mt-8 p-6 bg-zinc-900 rounded-2xl shadow-lg border border-zinc-700">
       <motion.div 
-        className=""
+        className="justify-items-center"
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         transition={{ duration: 0.6, delay: 0.5 }}
       >
       <h2 className="text-2xl font-bold text-zinc-100 mb-6 text-center">Resumen de Evaluación</h2>
-      <ul className="grid grid-cols-3 gap-4">
+      <ul className="grid grid-cols-3 gap-4 mb-5">
         {Object.entries(results).map(([subdomain, data]) => (
           <li
             key={subdomain}
@@ -28,13 +29,14 @@ export default function Summary({ evaluationId }) {
             <p className="text-lg font-semibold text-zinc-100 mb-2">{subdomain}</p>
             
             <p className="text-sm text-zinc-400">Nivel de capacidad</p>
-            <p className="text-purple-400 font-bold">{data.level}</p>
+            <p className="text-purple-400 font-bold">{data.level ?? 'N/A'}</p>
             
             <p className="text-sm text-zinc-400 mt-2">Progreso</p>
-            <p className="text-purple-400 font-bold">{data.prog}%</p>
+            <p className="text-purple-400 font-bold">{data.prog != null ? `${data.prog}%`:'N/A'}</p>
           </li>
         ))}
       </ul>
+      <Button text="Ir a inicio"/>
       </motion.div>
     </div>
   );
