@@ -1,6 +1,3 @@
-'use client';
-import {motion} from 'framer-motion';
-
 export default function LoadingMessage({mensaje}){
     return (
         <div className="flex flex-col justify-center items-center h-48">

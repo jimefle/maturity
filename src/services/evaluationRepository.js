@@ -23,3 +23,9 @@ export async function saveOrUpdateEvaluation(evaluationId,subdomain,resultData) 
             { upsert: true }
         );    
 }
+
+export async function findQuestionsBySubdomain(subdomain) {
+    const client = await clientPromise;
+    const db = client.db('maturity');
+    return await db.collection('questions').findOne({ subdomain });    
+}

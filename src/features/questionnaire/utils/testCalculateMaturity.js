@@ -1,4 +1,4 @@
-import { calculateSubdomainLevel, calculateDomainLevel } from './calculateMaturity.js';
+import { calculateSubdomainLevel, calculateDomainLevel } from './utils/calculateMaturity.js';
 // para probar > node src/features/evaluation/testCalculateMaturity.js
 
 const controlDeAccesosQuestions = [

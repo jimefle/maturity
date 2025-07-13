@@ -1,14 +1,14 @@
 'use client';
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import Questionnaire from "../../components/questionnaire";
+import Questionnaire from "@/features/questionnaire/components/questionnaire";
 import Header from "../../components/header";
 import { useRouter } from "next/navigation";
 
 export default function Evaluation(){
     const [evaluationId, setEvaluationId] = useState('');
     const [currentSubId, setSubId] = useState(0);
-    const subdomains = ['Control de accesos', 'Concientización y capacitación', 'Protección de datos'];
+    const subdomains = ['Control de accesos', 'Concientización y capacitación'];
     const router = useRouter()
 
     useEffect(()=>{

@@ -1,4 +1,4 @@
-import { saveEvaluation } from "@/features/evaluation/evaluationController";
+import { saveEvaluation } from "@/services/evaluationService";
 
 export async function POST(request) {
     console.log("✅ Entró a POST /api/post-evaluation");

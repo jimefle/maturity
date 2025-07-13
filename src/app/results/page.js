@@ -1,6 +1,6 @@
 'use client';
 import Header from "@/components/header";
-import Summary from "@/components/summary";
+import Summary from "@/features/results/components/summary";
 import Button from "@/components/button";
 import { useSearchParams } from "next/navigation";
 

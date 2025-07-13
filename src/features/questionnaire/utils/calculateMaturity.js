@@ -25,7 +25,6 @@ export async function calculateSubdomainLevel (allResponses, questions) {
 export function calculateDomainLevel(allSubdomainsResults){
   let totalProg = 0;
   let totalSubdomains = 0;
-  let numericLevels = [];
   let lowestLevel = Infinity;
   let lowestSubdomainName = null;
 

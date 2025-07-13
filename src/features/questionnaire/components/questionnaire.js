@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { calculateSubdomainLevel } from '@/features/evaluation/calculateMaturity';
-import { useFetchQuestions } from '@/hooks/useFetchQuestions';
-import { useSaveEvaluation } from '@/hooks/useSaveEvaluation';
-import LoadingMessage from './loadingmessage';
+import { calculateSubdomainLevel } from '@/features/questionnaire/utils/calculateMaturity';
+import { useFetchQuestions } from '@/features/questionnaire/hooks/useFetchQuestions';
+import { useSaveEvaluation } from '@/features/questionnaire/hooks/useSaveEvaluation';
+import LoadingMessage from '@/components/loadingmessage';
 import {motion } from 'framer-motion';
 
 export default function Questionnaire({ subdomain, evaluationId, onFinishSubdomain }) {

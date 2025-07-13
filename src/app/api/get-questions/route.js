@@ -1,4 +1,4 @@
-import { getQuestionsBySubdomain } from '@/features/question/questionController';
+import { getQuestionsBySubdomain } from "@/services/evaluationService";
 
 export async function GET(request) {
   console.log("✅ Entró a GET /api/get-questions");

@@ -1,8 +1,8 @@
 'use client';
-import { useFetchEvaluation } from "@/hooks/useFetchEvaluation";
-import LoadingMessage from "./loadingmessage";
+import { useFetchEvaluation } from "@/features/results/hooks/useFetchEvaluation";
+import LoadingMessage from "@/components/loadingmessage";
 import {motion} from 'framer-motion';
-import { calculateDomainLevel } from "@/features/evaluation/calculateMaturity";
+import { calculateDomainLevel } from "@/features/questionnaire/utils/calculateMaturity";
 
 export default function Summary({ evaluationId, isSubdomainResult=false }) {
   const { results, loading } = useFetchEvaluation(evaluationId);

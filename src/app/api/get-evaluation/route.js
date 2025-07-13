@@ -1,4 +1,4 @@
-import { getEvaluationById } from "@/features/evaluation/evaluationController";
+import { getEvaluationById } from "@/services/evaluationService";
 
 export async function GET(request) {
   console.log("✅ Entró a GET /api/get-evaluation");
