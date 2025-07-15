@@ -29,3 +29,10 @@ export async function findQuestionsBySubdomain(subdomain) {
     const db = client.db('maturity');
     return await db.collection('questions').findOne({ subdomain });    
 }
+
+export async function findRecommendations(responses) {
+    const client = await clientPromise;
+    const db = client.db('maturity');
+    const idsRecom = Object.values(responses).flatMap(q => q.recommendationIds || []);
+    return await db.collection('recommendations').find({ id: { $in: idsRecom } }).toArray();
+}

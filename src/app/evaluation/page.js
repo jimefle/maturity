@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import Questionnaire from "@/features/questionnaire/components/questionnaire";
-import Header from "../../components/header";
 import { useRouter } from "next/navigation";
 
 export default function Evaluation(){
@@ -19,7 +18,6 @@ export default function Evaluation(){
 
     return (
         <main className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top_right,_#581c87,_#18181b,_#18181b)] overflow-hidden">
-            <Header volver={true}/>
             <div className="flex-1 flex justify-center items-center">
                 <Questionnaire
                     subdomain={subdomains[currentSubId]}

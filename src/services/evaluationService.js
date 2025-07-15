@@ -1,4 +1,4 @@
-import { findEvaluationById, saveOrUpdateEvaluation, findQuestionsBySubdomain } from "./evaluationRepository";
+import { findEvaluationById, saveOrUpdateEvaluation, findQuestionsBySubdomain, findRecommendations } from "./evaluationRepository";
 
 export async function getEvaluationById(evaluationId) {
     if (!evaluationId) {
@@ -44,7 +44,7 @@ export async function upsert({ evaluationId, subdomain, responses, level, prog }
 }
 
 export async function getQuestionsBySubdomain(subdomain) {
-    if (!subdomain) {
+  if (!subdomain) {
     return Response.json({ error: 'Falta el subdominio' }, { status: 400 });
   }
 
@@ -59,6 +59,35 @@ export async function getQuestionsBySubdomain(subdomain) {
   } catch (error) {
     console.error('❌ Error al obtener preguntas:', error);
     return Response.json({ error: 'Error interno' }, { status: 500 });
+  }   
+}
+
+export async function getRecommendationsBySubdomain(evaluationId, subdomain){
+  if (!evaluationId || !subdomain) {
+    return new Response(JSON.stringify({ error: 'Formato incorrecto' }), { status: 400 })
   }
-    
+
+  try{
+    const evaluation = await findEvaluationById(evaluationId);
+
+    const subdomainData = evaluation.results[subdomain];
+    if (!subdomainData) {
+      return Response.json({ error: 'Subdominio no encontrado en la evaluación' }, { status: 404 });
+    }
+
+    const allRecommendations = await findRecommendations(subdomainData.responses);
+    if (!allRecommendations || allRecommendations.length === 0) {
+      return Response.json({ error: 'No se encontraron recomendaciones' }, { status: 404 });
+    }
+    const uniqueRecommendations = Object.values(allRecommendations.reduce((acc, rec) => {
+      acc[rec.id] = rec;
+      return acc;
+    }, {}));
+
+    return Response.json(uniqueRecommendations);
+  } catch (error) {
+    console.error('❌ Error al obtener recomendaciones:', error);
+    return Response.json({ error: 'Error interno' }, { status: 500 });
+  }  
+
 }

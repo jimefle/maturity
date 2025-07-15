@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { calculateSubdomainLevel } from '@/features/questionnaire/utils/calculateMaturity';
+import { calculateSubdomainLevel } from '@/features/questionnaire/utils/calculateSubdomainLevel';
 import { useFetchQuestions } from '@/features/questionnaire/hooks/useFetchQuestions';
 import { useSaveEvaluation } from '@/features/questionnaire/hooks/useSaveEvaluation';
 import LoadingMessage from '@/components/loadingmessage';
-import {motion } from 'framer-motion';
+import ContentMotion from '@/components/motion/contentMotion';
 
 export default function Questionnaire({ subdomain, evaluationId, onFinishSubdomain }) {
   const { questions, fLoading, fError } = useFetchQuestions(subdomain);
@@ -25,7 +25,10 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
   const handleChange = (value) => {
     setResponses((prev) => ({
       ...prev,
-      [currentQuestionId]: value
+      [currentQuestionId]: {
+        value, 
+        recommndationsIds: currentQuestion.options.find(opt => opt.value === value)?.recommndationsIds || []
+      }
     }));
   };
 
@@ -51,12 +54,7 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
 
   return (
     <div className="max-h-screen flex items-center justify-center p-5">
-      <motion.div 
-        className="flex flex-col md:flex-row justify-center items-stretch gap-6 mt-8 mb-12"
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        transition={{ duration: 0.6, delay: 0.5 }}
-      >
+      <ContentMotion>
       <main className="bg-black/20 backdrop-blur-md border border-zinc-700  shadow-lg rounded-2xl p-8">
         <h1 className="text-3xl font-bold text-zinc-100 mb-2 text-center">Evaluación de Madurez</h1>
         <h2 className="text-xl text-purple-400 mb-6 text-center">{subdomain}</h2>
@@ -97,7 +95,7 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
           {sError && <p className="text-red-500 mt-3">❌ {sError}</p>}
         </div>
       </main>
-      </motion.div>
+      </ContentMotion>
     </div>
   );
 }
