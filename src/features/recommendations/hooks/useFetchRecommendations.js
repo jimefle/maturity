@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-export function useFetchRecommendations(idsRecom) {
+export function useFetchRecommendations({evaluationId, subdomain}) {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!ids || ids.length === 0) {
+    if (!evaluationId || !subdomain) {
       setRecommendations([])
       setLoading(false)
       return
@@ -14,7 +14,7 @@ export function useFetchRecommendations(idsRecom) {
 
     const getRecommendations = async () => {
       try {
-        const res = await fetch(`/api/get-recommendations?ids=${encodeURIComponent(idsRecom)}`);
+        const res = await fetch(`/api/get-recommendations?evaluationId=${encodeURIComponent(evaluationId)}&subdomain=${encodeURIComponent(subdomain)}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -31,7 +31,7 @@ export function useFetchRecommendations(idsRecom) {
     };
 
     getRecommendations();
-  }, [idsRecom]);
+  }, [evaluationId, subdomain]);
 
   return { recommendations, loading, error };
   

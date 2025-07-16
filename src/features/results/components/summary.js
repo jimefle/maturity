@@ -1,5 +1,5 @@
 'use client';
-import {ContentMotion} from "@/components/motion/contentMotion";
+import ContentMotion from "@/components/motion/contentMotion";
 import { useFetchEvaluation } from "@/features/results/hooks/useFetchEvaluation";
 import LoadingMessage from "@/components/loadingmessage";
 import ResultCard from "./resultCard";
@@ -15,7 +15,7 @@ export default function Summary({ evaluationId}) {
   return (
     <div className="max-w-4xl p-6 bg-zinc-900 rounded-2xl shadow-lg border border-zinc-700">
       <ContentMotion>
-        <div className="justify-items-center flex gap-6">
+        <div className="flex flex-col justify-start mr-6 p-4">
           <p className="text-zinc-400 text-sm mb-1">{"Dominio"}</p>
           <p className="text-lg font-semibold text-zinc-100 mb-4">Proteger</p>
 
@@ -30,7 +30,7 @@ export default function Summary({ evaluationId}) {
         </div>
         <ul className="grid grid-rows-2 gap-4">
         {Object.entries(results).map(([subdomain, data]) => (
-          ResultCard({name:"Subdominio", subdomain, data})
+          <ResultCard key={subdomain} name="Subdominio" subdomain={subdomain} data={data} evaluationId={evaluationId} />
         ))}
         </ul>
       </ContentMotion>
