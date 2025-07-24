@@ -1,15 +1,36 @@
 'use client';
 import { User, LogOut, Info} from 'lucide-react';
 import Button from './button';
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {motion, AnimatePresence } from 'framer-motion';
 
 export default function Header({volver=false}){
     const [showInfo, setShowInfo] = useState(false);
+    const infoRef = useRef(null);
+    const buttonRef = useRef(null);
 
     const toggleInfo= ()=>{
         setShowInfo((prev)=>!prev)
     }
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if(!showInfo) return;
+            if(
+                (buttonRef.current && buttonRef.current.contains(event.target)) ||
+                (infoRef.current && infoRef.current.contains(event.target))
+            ) {
+                return;
+            }
+            setShowInfo(false);
+        };
+        if (showInfo) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showInfo]);
 
     return(
         <div>
@@ -22,7 +43,10 @@ export default function Header({volver=false}){
                 {volver &&
                  <Button text="Inicio" primary={false}/>
                 }
-                <div onClick={toggleInfo} className='hover:text-purple-100'>               
+                <div 
+                ref={buttonRef}
+                onClick={toggleInfo} 
+                className='hover:text-purple-100'>               
                     <Info />
                 </div>
             </div>
@@ -31,16 +55,20 @@ export default function Header({volver=false}){
         <AnimatePresence>
             {showInfo && (
                 <motion.div
-                    className="fixed top-16 right-4 bg-black/80 text-white p-4 rounded-lg shadow-lg max-w-xs z-50"
+                    ref={infoRef}
+                    className="fixed top-16 right-4 bg-black/80 text-white p-4 rounded-lg shadow-lg max-w-xs z-500"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
                 >
-                <h4 className="font-bold mb-2">Sobre esta página</h4>
+                <h4 className="font-bold mb-2">Acerca del proyecto</h4>
                 <p className="text-sm text-zinc-300">
-                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                        <br /><br />Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.          </p>
+                    Esta herramienta fue desarrollada como parte de un proyecto académico para la 
+                    carrera de Ingeniería en Sistemas de Información en UTN - Facultad Regional 
+                    Santa Fe. Su objetivo es brindar a pequeñas y medianas empresas una forma simple 
+                    y efectiva de evaluar su madurez en ciberseguridad, adaptando el diagnóstico a 
+                    las características específicas de cada organización. <br /></p>
                 <button
                 onClick={toggleInfo}
                 className="mt-2 text-purple-400 hover:text-purple-200 text-sm"
