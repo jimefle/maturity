@@ -60,7 +60,7 @@ export default function Questionnaire({ subdomain, evaluationId, onFinishSubdoma
   return (
     <div className="max-h-screen flex items-center justify-center p-5">
       <ContentMotion>
-        <main className="w-[90vh] max-w-xl h-[70vh] bg-black/20 backdrop-blur-md border border-zinc-700 shadow-lg rounded-2xl p-8">
+        <main className="max-w-xl h-fit bg-black/20 backdrop-blur-md border border-zinc-700 shadow-lg rounded-2xl p-8">
           <h1 className="text-3xl font-bold text-zinc-100 mb-2 text-center">Evaluación de Madurez</h1>
           <h2 className="text-xl text-purple-400 mb-6 text-center">{subdomain}</h2>
 

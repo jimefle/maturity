@@ -16,3 +16,6 @@ GET http://localhost:3000/api/get-evaluation?evaluationId={{evaluationId1}}
 ### Obtengo recomendaciones de la evaluación
 @subdomain1 = Control de accesos
 GET http://localhost:3000/api/get-recommendations?evaluationId={{evaluationId1}}&subdomain={{subdomain1}}
+### Evaluación sin recomendaciones
+GET http://localhost:3000/api/get-recommendations?evaluationId=2f5a6ca8-3b94-4f8c-acbc-1ececf34b356&subdomain=Control%20de%20accesos
+

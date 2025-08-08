@@ -8,7 +8,7 @@ import { calculateDomainLevel } from "../utils/calculateDomainLevel";
 export default function Summary({ evaluationId}) {
   const { results, loading } = useFetchEvaluation(evaluationId);
   const domainResult = calculateDomainLevel(results);
-
+  
   if (loading) return <LoadingMessage mensaje="resultados"/>;
   if (!results || Object.keys(results).length === 0) return <p className="text-zinc-400 text-center">No hay resultados disponibles.</p>;
 

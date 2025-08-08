@@ -10,6 +10,8 @@ export default function Recommendations(){
     const searchParams = useSearchParams();
     const evaluationId = searchParams.get('evaluationId');
     const subdomain = searchParams.get('subdomain');    
+    console.log("evaluation Id", evaluationId);
+
     return(
         <div className='min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_bottom,_#581c87,_#18181b,_#18181b)] relative overflow-hidden'>
             <main className="pt-16 min-h-screen flex flex-col items-center justify-center px-4 xl:px-16 gap-3">
